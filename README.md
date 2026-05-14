@@ -13,11 +13,18 @@ These skills are designed to make that context explicit, consistent, and product
 
 | Skill | Purpose |
 |---|---|
-| `agent-scaffolding-init` | Orchestrates initialization by invoking the other scaffolding skills |
+| `agent-scaffolding-init` | Orchestrates initialization — asks for output mode and invokes the appropriate skills |
+| **Plain .md generators** | |
 | `architecture-md-init` | Creates an `ARCHITECTURE.md` based on the project structure and architecture.md conventions |
 | `testing-md-init` | Produces a concise `TESTING.md` with strategy, conventions, and real test commands |
 | `deploy-md-init` | Produces a concise `DEPLOY.md` with exact deploy and rollback commands |
 | `gotchas-md-init` | Creates a `GOTCHAS.md` — chronological log of pitfalls for cross-session agent learning |
+| **Discoverable skill generators** | |
+| `architecture-skill-init` | Generates a discoverable architecture skill for the target platform |
+| `testing-skill-init` | Generates a discoverable testing skill for the target platform |
+| `deploy-skill-init` | Generates a discoverable deploy skill for the target platform |
+| `gotchas-skill-init` | Generates a discoverable gotchas skill for the target platform |
+| **Always generated** | |
 | `agents-md-init` | Creates an `AGENTS.md` from a bundled template — shared instructions for all coding agents |
 
 ## Repository structure
@@ -29,11 +36,19 @@ These skills are designed to make that context explicit, consistent, and product
 │   │   └── SKILL.md
 │   ├── architecture-md-init/
 │   │   └── SKILL.md
+│   ├── architecture-skill-init/
+│   │   └── SKILL.md
 │   ├── testing-md-init/
+│   │   └── SKILL.md
+│   ├── testing-skill-init/
 │   │   └── SKILL.md
 │   ├── deploy-md-init/
 │   │   └── SKILL.md
+│   ├── deploy-skill-init/
+│   │   └── SKILL.md
 │   ├── gotchas-md-init/
+│   │   └── SKILL.md
+│   ├── gotchas-skill-init/
 │   │   └── SKILL.md
 │   └── agents-md-init/
 │       ├── SKILL.md
@@ -47,6 +62,24 @@ These skills are designed to make that context explicit, consistent, and product
 1. Start from `skills/agent-scaffolding-init/SKILL.md`.
 2. Let your agent execute the workflow and invoke downstream skills.
 3. Review generated docs (`ARCHITECTURE.md`, `TESTING.md`, `DEPLOY.md`, `GOTCHAS.md`, `AGENTS.md`) and refine for project-specific details.
+
+## Output modes
+
+When you run `agent-scaffolding-init`, it asks which output mode you prefer:
+
+### Plain .md (default)
+Generates documentation files at the project root:
+- `ARCHITECTURE.md`, `TESTING.md`, `DEPLOY.md`, `GOTCHAS.md`, `AGENTS.md`
+
+These are passive context files that agents read when instructed.
+
+### Discoverable skills
+Generates platform-specific skill files that agents discover and load automatically:
+- `<project>-architecture`, `<project>-testing`, `<project>-deploy`, `<project>-gotchas`
+
+Each skill includes trigger descriptions, application guidance, and verification steps — not just reference content. You choose the target platform (OpenCode, Claude Code, or Copilot CLI) and skills are placed in the correct directory.
+
+`AGENTS.md` is always generated as a plain file regardless of mode.
 
 ## Design principles
 
