@@ -52,7 +52,8 @@ These skills are designed to make that context explicit, consistent, and product
 │   │   └── SKILL.md
 │   └── agents-md-init/
 │       ├── SKILL.md
-│       └── template.md
+│       ├── template.md
+│       └── template-skills.md
 ├── LICENSE
 └── README.md
 ```
