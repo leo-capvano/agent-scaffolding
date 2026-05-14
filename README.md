@@ -17,6 +17,8 @@ These skills are designed to make that context explicit, consistent, and product
 | `architecture-md-init` | Creates an `ARCHITECTURE.md` based on the project structure and architecture.md conventions |
 | `testing-md-init` | Produces a concise `TESTING.md` with strategy, conventions, and real test commands |
 | `deploy-md-init` | Produces a concise `DEPLOY.md` with exact deploy and rollback commands |
+| `gotchas-md-init` | Creates a `GOTCHAS.md` — chronological log of pitfalls for cross-session agent learning |
+| `agents-md-init` | Creates an `AGENTS.md` from a bundled template — shared instructions for all coding agents |
 
 ## Repository structure
 
@@ -29,8 +31,13 @@ These skills are designed to make that context explicit, consistent, and product
 │   │   └── SKILL.md
 │   ├── testing-md-init/
 │   │   └── SKILL.md
-│   └── deploy-md-init/
-│       └── SKILL.md
+│   ├── deploy-md-init/
+│   │   └── SKILL.md
+│   ├── gotchas-md-init/
+│   │   └── SKILL.md
+│   └── agents-md-init/
+│       ├── SKILL.md
+│       └── template.md
 ├── LICENSE
 └── README.md
 ```
@@ -39,7 +46,7 @@ These skills are designed to make that context explicit, consistent, and product
 
 1. Start from `skills/agent-scaffolding-init/SKILL.md`.
 2. Let your agent execute the workflow and invoke downstream skills.
-3. Review generated docs (`ARCHITECTURE.md`, `TESTING.md`, `DEPLOY.md`) and refine for project-specific details.
+3. Review generated docs (`ARCHITECTURE.md`, `TESTING.md`, `DEPLOY.md`, `GOTCHAS.md`, `AGENTS.md`) and refine for project-specific details.
 
 ## Design principles
 
