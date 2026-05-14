@@ -9,13 +9,23 @@ description: >
 
 ## What this skill does
 
-Creates an `AGENTS.md` file at the project root — the shared instruction set that every coding agent reads before acting. It is derived from the template bundled with this skill (`template.md`) and adapted to match the project's actual context files.
+Creates an `AGENTS.md` file at the project root — the shared instruction set that every coding agent reads before acting. It is derived from the template bundled with this skill and adapted to match the project's actual context.
+
+## Inputs
+
+This skill receives a **mode** from the orchestrator:
+- **plain** (default): Uses `template.md` — includes context file references.
+- **skills**: Uses `template-skills.md` — general rules only (context is delivered via platform skill discovery).
+
+If no mode is specified, assume **plain**.
 
 ## Steps
 
-1. **Read the template** at `skills/agents-md-init/template.md` (relative to this repo).
+1. **Determine the template** based on mode:
+   - If mode is `plain`: read `skills/agents-md-init/template.md`
+   - If mode is `skills`: read `skills/agents-md-init/template-skills.md`
 
-2. **Scan the project root** for existing context files:
+2. **Scan the project root** for existing context files (only relevant in plain mode):
    - ARCHITECTURE.md
    - TESTING.md
    - DEPLOY.md
@@ -24,16 +34,15 @@ Creates an `AGENTS.md` file at the project root — the shared instruction set t
 
 3. **Adapt the template**:
    - Keep the "General rules" section as-is from the template.
-   - Under "Context files", include only the files that actually exist (or will be created by the scaffolding run).
-   - If the project has additional relevant docs (e.g., API.md, CONTRIBUTING.md), add a short entry for them following the same pattern.
+   - **Plain mode only**: Under "Context files", include only the files that actually exist (or will be created by the scaffolding run). If the project has additional relevant docs (e.g., API.md, CONTRIBUTING.md), add a short entry following the same pattern.
+   - **Skills mode**: No adaptation needed beyond the general rules — write the template as-is.
 
 4. **Write AGENTS.md** to the project root.
    - If it already exists, compare with the template and update structure while preserving any project-specific customizations the user added.
 
 ## Rules
 
-- The template (`template.md`) is the single source of truth for the base content. When the template evolves, re-running this skill picks up the changes.
-- Do NOT hardcode the template content in this skill file — always read it from `template.md`.
-- Keep the output concise: the file should be scannable in under 15 seconds.
-- Do NOT add sections for context files that do not exist in the project.
+- The template files are the single source of truth. Always read from file — do NOT hardcode content.
+- Keep the output concise: scannable in under 15 seconds.
+- In plain mode, do NOT add sections for context files that do not exist.
 - Preserve any custom sections the user may have added manually (append-safe).
