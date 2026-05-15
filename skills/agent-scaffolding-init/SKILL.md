@@ -1,44 +1,73 @@
 ---
 name: "agent-scaffolding-init"
-description: "Initialize a new agent scaffolding project with the necessary files and structure."
+description: "Initialize agent scaffolding for a project — generates context files or discoverable skills with a single invocation."
 ---
 
 # Agent Scaffolding Initialization
 
-This skill initializes a new agent scaffolding project by creating the necessary context files (or discoverable skills) and directory structure. It sets up a framework for coding agents to work effectively in the project.
+Generates context artifacts for coding agents in the target project. Supports two output modes and handles all artifacts through a single skill with bundled reference files.
 
-# Workflow
+## Workflow
 
-1. **Explore the project structure**: use a subagent to explore the project structure and understand the codebase.
+### 1. Ask output mode
 
-2. **Ask the user for output mode**:
-   - "Do you want to generate **plain .md context files** or **discoverable skills**?"
-   - If the user chooses **skills**, ask: "Which agent platform(s) are you targeting?"
-     - OpenCode
-     - Claude Code
-     - Copilot CLI
-     - Multiple (ask which combination)
+Ask the user:
+- "Do you want to generate **plain .md context files** or **discoverable skills**?"
 
-3. **Dispatch to generators** based on the chosen mode:
+### 2. Ask platform (skills mode only)
 
-   **Plain mode** — invoke these skills (via subagents, with exploration results as context):
-   - `architecture-md-init`
-   - `testing-md-init`
-   - `deploy-md-init`
-   - `gotchas-md-init`
+If the user chose skills:
+- "Which agent platform(s) are you targeting?"
+  - OpenCode → `.opencode/skills/<project>-<artifact>/SKILL.md`
+  - Claude Code → `.claude/skills/<project>-<artifact>/SKILL.md`
+  - Copilot CLI → `.github/skills/<project>-<artifact>/SKILL.md`
+  - Multiple → ask which combination, generate to each selected platform's path
 
-   **Skills mode** — invoke these skills (via subagents, with exploration results AND platform choice as context):
-   - `architecture-skill-init`
-   - `testing-skill-init`
-   - `deploy-skill-init`
-   - `gotchas-skill-init`
+### 3. Dispatch artifact generators in parallel
 
-4. **Generate AGENTS.md** (always last, in both modes):
-   - Invoke `agents-md-init` via a subagent, passing the chosen mode (`plain` or `skills`) so it picks the correct template.
+Spawn 4 subagents in parallel. Each subagent receives:
+- The content of its reference file (read from `references/<artifact>.md`)
+- The chosen mode (`plain` or `skills`)
+- The platform (if skills mode)
+
+Each subagent independently:
+1. Explores the project to gather context relevant to its artifact
+2. Generates the artifact following the instructions in its reference file
+3. If the artifact already exists: validates, updates, and lints it (does NOT overwrite)
+
+Artifacts and their reference files:
+| Artifact | Reference File |
+|----------|---------------|
+| Architecture | `references/architecture.md` |
+| Testing | `references/testing.md` |
+| Deploy | `references/deploy.md` |
+| Gotchas | `references/gotchas.md` |
+
+### 4. Generate AGENTS.md (always last)
+
+After all 4 artifact subagents complete, generate AGENTS.md:
+
+1. Read the appropriate template:
+   - Plain mode: `references/agents-template.md`
+   - Skills mode: `references/agents-template-skills.md`
+
+2. Adapt the template:
+   - **Plain mode**: Under "Context files", include only the files that actually exist in the project. If additional relevant docs exist (e.g., API.md), add a short entry following the same pattern.
+   - **Skills mode**: Write the template as-is (no adaptation needed — context is delivered via platform skill discovery).
+
+3. Write `AGENTS.md` to the project root.
+   - If it already exists, update structure while preserving user customizations.
+
+## Single Artifact Mode
+
+If the user requests only one specific artifact (e.g., "just generate testing"):
+- Still ask mode and platform questions
+- Dispatch only that artifact's subagent
+- Skip AGENTS.md generation unless explicitly requested
 
 ## Notes
 
-- For steps 3-4, spawn a subagent for each skill and give it the exploration results as initial context.
-- In skills mode, each subagent also receives the platform choice (e.g., `opencode`, `claude`, `copilot`, or a list for multiple).
-- Some files/skills may already exist; subagents will verify content is correct and update if necessary.
-- The AGENTS.md step runs last because it depends on knowing which context files or skills were generated.
+- Reference files are the source of truth for each artifact's generation instructions.
+- Always read reference files from disk — do NOT hardcode their content.
+- Create platform directory structure if it does not exist (skills mode).
+- The project name for skill paths comes from: package.json name → Cargo.toml [package] name → root directory name (in that priority order).
