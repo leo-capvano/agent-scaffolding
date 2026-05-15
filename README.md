@@ -2,58 +2,40 @@
 
 > Reusable, lightweight scaffolding to help coding agents bootstrap high-quality project documentation and workflows.
 
-This repository provides a set of focused **skills** that guide an agent through creating essential project artifacts such as architecture, testing, and deployment documentation.
+This repository provides a single **skill** that guides an agent through creating essential project artifacts such as architecture, testing, and deployment documentation.
 
 ## Why this repository?
 
 When an agent starts in a new codebase, context quality determines output quality.  
 These skills are designed to make that context explicit, consistent, and production-ready.
 
-## Included skills
+## Included skill
 
-| Skill | Purpose |
+The repository contains a single unified skill — `agent-scaffolding-init` — that orchestrates the entire initialization workflow. It asks for the output mode, then dispatches subagents with instructions drawn from bundled reference files:
+
+| Reference file | Purpose |
 |---|---|
-| `agent-scaffolding-init` | Orchestrates initialization — asks for output mode and invokes the appropriate skills |
-| **Plain .md generators** | |
-| `architecture-md-init` | Creates an `ARCHITECTURE.md` based on the project structure and architecture.md conventions |
-| `testing-md-init` | Produces a concise `TESTING.md` with strategy, conventions, and real test commands |
-| `deploy-md-init` | Produces a concise `DEPLOY.md` with exact deploy and rollback commands |
-| `gotchas-md-init` | Creates a `GOTCHAS.md` — chronological log of pitfalls for cross-session agent learning |
-| **Discoverable skill generators** | |
-| `architecture-skill-init` | Generates a discoverable architecture skill for the target platform |
-| `testing-skill-init` | Generates a discoverable testing skill for the target platform |
-| `deploy-skill-init` | Generates a discoverable deploy skill for the target platform |
-| `gotchas-skill-init` | Generates a discoverable gotchas skill for the target platform |
-| **Always generated** | |
-| `agents-md-init` | Creates an `AGENTS.md` from a bundled template — shared instructions for all coding agents |
+| `architecture.md` | Instructions for creating an `ARCHITECTURE.md` based on the project structure |
+| `testing.md` | Instructions for producing a concise `TESTING.md` with strategy, conventions, and real test commands |
+| `deploy.md` | Instructions for producing a concise `DEPLOY.md` with exact deploy and rollback commands |
+| `gotchas.md` | Instructions for creating a `GOTCHAS.md` — chronological log of pitfalls for cross-session agent learning |
+| `agents-template.md` | Template for `AGENTS.md` — shared instructions for all coding agents |
+| `agents-template-skills.md` | Template variant for `AGENTS.md` when using discoverable skills mode |
 
 ## Repository structure
 
 ```text
 .
 ├── skills/
-│   ├── agent-scaffolding-init/
-│   │   └── SKILL.md
-│   ├── architecture-md-init/
-│   │   └── SKILL.md
-│   ├── architecture-skill-init/
-│   │   └── SKILL.md
-│   ├── testing-md-init/
-│   │   └── SKILL.md
-│   ├── testing-skill-init/
-│   │   └── SKILL.md
-│   ├── deploy-md-init/
-│   │   └── SKILL.md
-│   ├── deploy-skill-init/
-│   │   └── SKILL.md
-│   ├── gotchas-md-init/
-│   │   └── SKILL.md
-│   ├── gotchas-skill-init/
-│   │   └── SKILL.md
-│   └── agents-md-init/
+│   └── agent-scaffolding-init/
 │       ├── SKILL.md
-│       ├── template.md
-│       └── template-skills.md
+│       └── references/
+│           ├── architecture.md
+│           ├── testing.md
+│           ├── deploy.md
+│           ├── gotchas.md
+│           ├── agents-template.md
+│           └── agents-template-skills.md
 ├── LICENSE
 └── README.md
 ```
@@ -61,7 +43,7 @@ These skills are designed to make that context explicit, consistent, and product
 ## How to use
 
 1. Start from `skills/agent-scaffolding-init/SKILL.md`.
-2. Let your agent execute the workflow and invoke downstream skills.
+2. Let your agent execute the workflow — it dispatches subagents with reference file instructions to generate each artifact.
 3. Review generated docs (`ARCHITECTURE.md`, `TESTING.md`, `DEPLOY.md`, `GOTCHAS.md`, `AGENTS.md`) and refine for project-specific details.
 
 ## Output modes
@@ -86,7 +68,7 @@ Each skill includes trigger descriptions, application guidance, and verification
 
 - **Concise over verbose**: short, actionable outputs.
 - **Reality-based**: commands and guidance should match the actual repository.
-- **Composable**: independent skills that can be orchestrated together.
+- **Composable**: independent reference files orchestrated by a single skill.
 - **Agent-friendly**: deterministic structure that improves repeatability.
 
 ## Contributing
